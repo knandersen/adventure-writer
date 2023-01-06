@@ -51,25 +51,22 @@
 
     const continueAdventure = async (prompt, target) => {
         prompt = htmlToText(prompt);
-        let x = await requestCompletion(prompt);
+        await requestCompletion(prompt);
         const storyPosition = story.length;
         const bufferLength = buffer.length;
         // console.log(`${storyPosition} - ${bufferLength}`);
-        console.log($textBuffer);
         let text = formatText(buffer);
-        // strip story of html tags
-        console.log(story);
-        console.log(text);
-        textStory.set(story + " " + text);
-        console.log($textStory);
-        console.log(target);
-        console.log("done!");
+        await textStory.set(story + " " + text);
 
-        target.focus();
-        // select all the content in the element
-        document.execCommand("selectAll", false, null);
-        // collapse selection to the end
-        document.getSelection().collapseToEnd();
+        // set cursor position to end
+        var range = document.createRange();
+        var sel = window.getSelection();
+
+        range.setStart(target.childNodes[0], $textStory.length);
+        range.collapse(true);
+
+        sel.removeAllRanges();
+        sel.addRange(range);
     };
 
     const onTextareaKeypress = (event) => {
@@ -108,5 +105,6 @@
         text-align: left;
         background-color: rgba(0, 0, 0, 0.1);
         display: inline-block;
+        white-space: pre-wrap;
     }
 </style>
