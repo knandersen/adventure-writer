@@ -19,17 +19,36 @@
 
 <style>
     #status {
-        width: 1em;
-        height: 1em;
-        border-radius: 50%;
+        width: 100%;
+        height: 0.3em;
+        margin: 1em 0;
+        /* border-radius: 50%; */
     }
     .connected {
-        background-color: green;
+        background: rgb(16, 36, 0);
+        background: radial-gradient(
+            circle,
+            rgba(0, 255, 40, 1) 0%,
+            rgba(9, 121, 32, 0.5) 35%,
+            rgba(16, 36, 0, 0) 100%
+        );
     }
     .disconnected {
-        background-color: red;
+        background: rgb(255, 0, 0);
+        background: radial-gradient(
+            circle,
+            rgba(255, 0, 0, 1) 0%,
+            rgba(121, 10, 9, 0.5) 35%,
+            rgba(36, 0, 0, 0) 100%
+        );
     }
     .working {
-        background-color: orange;
+        background: rgb(255, 224, 0);
+        background: radial-gradient(
+            circle,
+            rgba(255, 224, 0, 1) 0%,
+            rgba(121, 100, 9, 0.5) 35%,
+            rgba(16, 36, 0, 0) 100%
+        );
     }
 </style>
