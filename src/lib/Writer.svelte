@@ -1,11 +1,11 @@
 <script>
     import { onMount } from "svelte";
     import { textBuffer, textStory } from "./store";
-    import { checkConnection, requestCompletion } from "./openai";
+    import { requestCompletion } from "./openai";
+    import TextLoaderGroup from "./TextLoaderGroup.svelte";
 
     const url = "https://openai-server-n8us.onrender.com";
     // const url = "http://localhost:10231";
-    const writingWindow = document.getElementById("writingWindow");
 
     let story;
     textStory.subscribe((v) => {
@@ -20,11 +20,13 @@
     const endpointConnect = url + "/connect";
     const endpointCompletion = url + "/completion";
 
+    let promise = null;
+
     onMount(() => {
-        // startAdventure();
-        textStory.set(
+        promise = startAdventure();
+        /* textStory.set(
             "Once upon a time there was a beautiful princess who loved to sing. She had the most beautiful voice in all the land and everyone who heard her sing was enchanted."
-        );
+        ); */
     });
 
     export const formatText = (text) => {
@@ -73,27 +75,26 @@
         let char = typeof event !== "undefined" ? event.keyCode : event.which;
         if (event.key === "Tab") {
             event.preventDefault();
-            continueAdventure(
+            promise = continueAdventure(
                 "continue this story: " + $textStory,
                 event.target
             );
         }
     };
-
-    const onScroll = (event) => {
-        event.preventDefault();
-        console.log("scroll");
-    };
 </script>
 
+<!--  -->
 <div
     contenteditable="true"
     bind:textContent={$textStory}
     on:keydown={onTextareaKeypress}
     id="writingWindow"
-/>
+>
+    {#await promise}<TextLoaderGroup />{/await}
+</div>
 
 <style>
+    @import "../../node_modules/placeholder-loading/dist/css/placeholder-loading.min.css";
     .waiting {
         background-color: yellow;
     }
@@ -102,6 +103,7 @@
         width: 30em;
         height: 60em;
         padding: 1em;
+        margin: -1em;
         text-align: left;
         background-color: rgba(0, 0, 0, 0.1);
         display: inline-block;
