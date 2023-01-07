@@ -3,17 +3,22 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://knandersen.github.io/adventure-writer/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "yarn build && gh-pages -d dist"
   },
   "devDependencies": {
     "@sveltejs/vite-plugin-svelte": "^1.1.0",
+    "gh-pages": "^4.0.0",
     "svelte": "^3.52.0",
     "vite": "^3.2.3"
   },
   "dependencies": {
-    "openai": "^3.1.0"
+    "openai": "^3.1.0",
+    "placeholder-loading": "^0.6.0",
+    "svelte-content-loader": "^1.1.3"
   }
 }
