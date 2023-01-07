@@ -3,8 +3,8 @@ import { onMount } from "svelte";
 import { text } from "svelte/internal";
 import { textBuffer, textStory, appStatus } from "./store";
 
-// const url = "https://openai-server-n8us.onrender.com";
-const url = "http://localhost:10231";
+const url = "https://openai-server-n8us.onrender.com";
+// const url = "http://localhost:10231";
 
 const endpointConnect = url + "/connect";
 const endpointCompletion = url + "/completion";
