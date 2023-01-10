@@ -4,8 +4,16 @@
     import { requestCompletion } from "./openai";
     import TextLoaderGroup from "./TextLoaderGroup.svelte";
 
-    const url = "https://openai-server-n8us.onrender.com";
-    // const url = "http://localhost:10231";
+    export let callback;
+
+    let input;
+    export function focus() {
+        input.focus();
+    }
+
+    export function me() {
+        return input;
+    }
 
     let story;
     textStory.subscribe((v) => {
@@ -17,19 +25,13 @@
         buffer = v;
     });
 
-    const endpointConnect = url + "/connect";
-    const endpointCompletion = url + "/completion";
-
     let promise = null;
 
     onMount(() => {
         promise = startAdventure();
-        /* textStory.set(
-            "Once upon a time there was a beautiful princess who loved to sing. She had the most beautiful voice in all the land and everyone who heard her sing was enchanted."
-        ); */
     });
 
-    export const formatText = (text) => {
+    const formatText = (text) => {
         // Remove line breaks
         let formattedText = text.replace(/(\r\n|\n|\r)/gm, "");
         return formattedText;
@@ -46,14 +48,18 @@
     };
 
     const startAdventure = async () => {
-        await requestCompletion("Start a fictional fairytale story:");
+        /* await requestCompletion("Start a fictional fairytale story:");
         let text = formatText(buffer);
-        textStory.set(text);
+        textStory.set(text); */
+
+        textStory.set(
+            "Once upon a time there was a beautiful princess who loved to sing. She had the most beautiful voice in all the land and everyone who heard her sing was enchanted."
+        );
     };
 
-    const continueAdventure = async (prompt, target) => {
-        prompt = htmlToText(prompt);
-        await requestCompletion(prompt);
+    export const continueAdventure = async () => {
+        let prompt = htmlToText("continue this story: " + $textStory);
+        promise = await requestCompletion(prompt);
         const storyPosition = story.length;
         const bufferLength = buffer.length;
         // console.log(`${storyPosition} - ${bufferLength}`);
@@ -64,7 +70,7 @@
         var range = document.createRange();
         var sel = window.getSelection();
 
-        range.setStart(target.childNodes[0], $textStory.length);
+        range.setStart(input.childNodes[0], $textStory.length);
         range.collapse(true);
 
         sel.removeAllRanges();
@@ -75,19 +81,27 @@
         let char = typeof event !== "undefined" ? event.keyCode : event.which;
         if (event.key === "Tab") {
             event.preventDefault();
-            promise = continueAdventure(
-                "continue this story: " + $textStory,
-                event.target
-            );
+            continueAdventure();
         }
     };
+
+    const scrollHandler = () => {
+        input.blur();
+    };
+
+    let height = window.visualViewport.height;
+    let viewport = window.visualViewport;
 </script>
 
-<!--  -->
 <div
     contenteditable="true"
     bind:textContent={$textStory}
+    bind:this={input}
     on:keydown={onTextareaKeypress}
+    on:focus={callback}
+    on:focusout={callback}
+    on:blur={callback}
+    on:scroll={scrollHandler}
     id="writingWindow"
 >
     {#await promise}<TextLoaderGroup />{/await}
@@ -95,18 +109,26 @@
 
 <style>
     @import "../../node_modules/placeholder-loading/dist/css/placeholder-loading.min.css";
-    .waiting {
-        background-color: yellow;
-    }
 
     #writingWindow {
         width: 30em;
-        height: 60em;
+        height: 100vh;
         padding: 1em;
-        margin: -1em;
+        margin: 1em 0 0 0;
+        overflow-y: scroll;
         text-align: left;
         background-color: rgba(0, 0, 0, 0.1);
         display: inline-block;
         white-space: pre-wrap;
+        border: none;
+        outline: none;
+    }
+
+    @media screen and (max-width: 768px) {
+        #writingWindow {
+            width: 90%;
+            padding: 0.7em;
+            margin-top: 0.2em;
+        }
     }
 </style>
