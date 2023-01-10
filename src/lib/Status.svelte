@@ -51,4 +51,11 @@
             rgba(16, 36, 0, 0) 100%
         );
     }
+
+    @media screen and (max-width: 768px) {
+        #status {
+            height: 3px;
+            margin: 0.2em 0;
+        }
+    }
 </style>

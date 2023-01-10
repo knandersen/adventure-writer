@@ -5,7 +5,7 @@
   "type": "module",
   "homepage": "https://knandersen.github.io/adventure-writer/",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "vite build",
     "preview": "vite preview",
     "deploy": "yarn build && gh-pages -d dist"
@@ -17,6 +17,7 @@
     "vite": "^3.2.3"
   },
   "dependencies": {
+    "@bulatdashiev/svelte-slider": "^1.0.3",
     "openai": "^3.1.0",
     "placeholder-loading": "^0.6.0",
     "svelte-content-loader": "^1.1.3"
