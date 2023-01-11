@@ -1,7 +1,7 @@
 <script>
     import { onMount } from "svelte";
     import { textBuffer, textStory } from "./store";
-    import { requestCompletion } from "./openai";
+    import { startCompletion, continueCompletion } from "./completion";
     import TextLoaderGroup from "./TextLoaderGroup.svelte";
 
     export let callback;
@@ -28,8 +28,14 @@
     let promise = null;
 
     onMount(() => {
+        textStory.set("");
+        textBuffer.set("");
         promise = startAdventure();
     });
+
+    const addHighlight = (text) => {
+        return text;
+    };
 
     const formatText = (text) => {
         // Remove line breaks
@@ -37,44 +43,33 @@
         return formattedText;
     };
 
-    const htmlToText = (html) => {
-        let tmp = document.createElement("div");
-        tmp.innerHTML = html;
-        return tmp.textContent || tmp.innerText || "";
-    };
-
-    const addHighlight = (text) => {
-        return text;
-    };
-
-    const startAdventure = async () => {
-        /* await requestCompletion("Start a fictional fairytale story:");
-        let text = formatText(buffer);
-        textStory.set(text); */
-
-        textStory.set(
-            "Once upon a time there was a beautiful princess who loved to sing. She had the most beautiful voice in all the land and everyone who heard her sing was enchanted."
-        );
-    };
-
-    export const continueAdventure = async () => {
-        let prompt = htmlToText("continue this story: " + $textStory);
-        promise = await requestCompletion(prompt);
-        const storyPosition = story.length;
-        const bufferLength = buffer.length;
-        // console.log(`${storyPosition} - ${bufferLength}`);
-        let text = formatText(buffer);
-        await textStory.set(story + " " + text);
-
+    const moveCursorToEnd = (el, text) => {
         // set cursor position to end
         var range = document.createRange();
         var sel = window.getSelection();
 
-        range.setStart(input.childNodes[0], $textStory.length);
+        range.setStart(el.childNodes[0], text.length);
         range.collapse(true);
 
         sel.removeAllRanges();
         sel.addRange(range);
+    };
+
+    const startAdventure = async () => {
+        promise = startCompletion();
+        await promise;
+        await textStory.set(formatText(buffer));
+        /* textStory.set(
+            "Once upon a time there was a beautiful princess who loved to sing. She had the most beautiful voice in all the land and everyone who heard her sing was enchanted."
+        ); */
+    };
+
+    export const continueAdventure = async (prompt) => {
+        promise = continueCompletion(prompt);
+        await promise;
+        await textStory.set(story + " " + formatText(buffer));
+
+        moveCursorToEnd(input, $textStory);
     };
 
     const onTextareaKeypress = (event) => {
