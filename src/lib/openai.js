@@ -7,16 +7,11 @@ const url = "https://openai-server-n8us.onrender.com";
 const endpointConnect = url + "/connect";
 const endpointCompletion = url + "/completion";
 
-let s;
-appStatus.subscribe(v => {
-    s = v
-})
-
 export const checkConnection = async () => {
     await fetch(endpointConnect)
         .then((response) => response.text())
         .then((data) => {
-            if (s != "working") {
+            if (appStatus != "working") {
                 if (data === "connected") {
                     appStatus.set("connected");
                 } else {
