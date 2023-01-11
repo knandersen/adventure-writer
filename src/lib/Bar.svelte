@@ -8,7 +8,6 @@
 
     const dispatch = createEventDispatcher();
 
-    export let visibility = "hidden";
     let height = window.visualViewport.height;
     let viewport = window.visualViewport;
     let bar;
