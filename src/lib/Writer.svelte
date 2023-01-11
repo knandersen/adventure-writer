@@ -15,16 +15,6 @@
         return input;
     }
 
-    let story;
-    textStory.subscribe((v) => {
-        story = v;
-    });
-
-    let buffer;
-    textBuffer.subscribe((v) => {
-        buffer = v;
-    });
-
     let promise = null;
 
     onMount(() => {
@@ -58,7 +48,7 @@
     const startAdventure = async () => {
         promise = startCompletion();
         await promise;
-        await textStory.set(formatText(buffer));
+        await textStory.set(formatText($textBuffer.raw));
         /* textStory.set(
             "Once upon a time there was a beautiful princess who loved to sing. She had the most beautiful voice in all the land and everyone who heard her sing was enchanted."
         ); */
@@ -67,7 +57,7 @@
     export const continueAdventure = async (prompt) => {
         promise = continueCompletion(prompt);
         await promise;
-        await textStory.set(story + " " + formatText(buffer));
+        await textStory.set($textStory + " " + formatText($textBuffer));
 
         moveCursorToEnd(input, $textStory);
     };
