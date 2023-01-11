@@ -1,7 +1,5 @@
 
-import { onMount } from "svelte";
-import { text } from "svelte/internal";
-import { textBuffer, textStory, appStatus } from "./store";
+import { textBuffer, appStatus } from "./store";
 
 const url = "https://openai-server-n8us.onrender.com";
 // const url = "http://localhost:10231";
@@ -13,7 +11,6 @@ let s;
 appStatus.subscribe(v => {
     s = v
 })
-let buttonStatus = "";
 
 export const checkConnection = async () => {
     await fetch(endpointConnect)
