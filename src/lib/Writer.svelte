@@ -5,17 +5,23 @@
         textBuffer,
         textStory,
         writerFocused,
+        bufferActive,
+        bufferWords,
+        bufferWordsWanted,
     } from "./store";
     import { getCompletionStart, getCompletionMore } from "./completion";
     import TextLoaderGroup from "./TextLoaderGroup.svelte";
-    import { moveCursorToEnd } from "./writer.helper";
+    import {
+        moveCursorToEnd,
+        getWordsFromString,
+        formatText,
+    } from "./writer.helper";
 
     let promise = null;
-
     let div;
 
     export const getAdventureMore = async () => {
-        if ($textBuffer.active) {
+        if ($bufferActive) {
             await commitBufferToStory();
         }
         promise = getCompletionMore($textStory);
@@ -35,31 +41,22 @@
         promise = getAdventureStart();
     });
 
-    const formatText = (text) => {
-        // Remove line breaks
-        let formattedText = text.replace(/(\r\n|\n|\r)/gm, "");
-        return formattedText;
-    };
-
-    $: if ($textBuffer.wordsWanted) {
+    $: if ($bufferWordsWanted) {
         moveCursorToEnd(div);
     }
-
-    const getWords = (n) => {
-        return $textBuffer.words.slice(0, n).join(" ");
-    };
 
     const commitBufferToStory = async () => {
         // Await since updating the store creates a race condition for moving the cursor
         await textStory.set(
-            $textStory + formatText(getWords($textBuffer.wordsWanted))
+            $textStory +
+                formatText(getWordsFromString($bufferWords, $bufferWordsWanted))
         );
         await textBuffer.set(textBufferInitial);
         moveCursorToEnd(div);
     };
 
     const keydownHandler = async (event) => {
-        if ($textBuffer.active) {
+        if ($bufferActive) {
             // TODO: Check whether the key is actually a character
             await commitBufferToStory();
         }
@@ -88,8 +85,10 @@
     on:blur={focusHandler}
     id="writingWindow"
 >
-    {$textStory}{#if $textBuffer.active}<span
-            >{formatText(getWords($textBuffer.wordsWanted))}</span
+    {$textStory}{#if $bufferActive}<span
+            >{formatText(
+                getWordsFromString($bufferWords, $bufferWordsWanted)
+            )}</span
         >{/if}{#await promise}<TextLoaderGroup />{/await}
 </div>
 

@@ -31,3 +31,27 @@ Here, we'll create a derived store to hold the drink names.
 /**
  * TODO: Write these data transformations for textBuffer
  */
+
+export const bufferActive = derived(textBuffer, ($textBuffer) => {
+  if ($textBuffer.active) {
+    return $textBuffer.active
+  }
+})
+
+export const bufferWords = derived(textBuffer, ($textBuffer) => {
+  if ($textBuffer.raw) {
+    return $textBuffer.raw.split(" ")
+  }
+})
+
+export const bufferWordsWanted = derived(textBuffer, ($textBuffer) => {
+  if ($textBuffer.wordsWanted) {
+    return $textBuffer.wordsWanted
+  }
+})
+
+export const barSliderValues = derived(textBuffer, ($textBuffer) => {
+  if ($textBuffer.words && $textBuffer.wordsWanted) {
+    return [$textBuffer.wordsWanted, $textBuffer.words.length]
+  }
+})

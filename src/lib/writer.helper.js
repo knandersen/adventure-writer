@@ -18,6 +18,18 @@ export const getTextLength = (el) => {
     return el.textContent.length;
 };
 
+
+
+export const getWordsFromString = (str, n) => {
+    return str.slice(0, n).join(" ");
+};
+
+export const formatText = (text) => {
+    // Remove line breaks
+    let formattedText = text.replace(/(\r\n|\n|\r)/gm, "");
+    return formattedText;
+};
+
 /* export const moveCursorToPosition = (el, position) => {
     console.log(el.childNodes)
     console.log(`total length ${getTextLength(el.firstChild)}`)
