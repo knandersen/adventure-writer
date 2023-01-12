@@ -1,19 +1,18 @@
 <script>
     import { onMount } from "svelte";
-    import { textBufferInitial, textBuffer, textStory } from "./store";
+    import {
+        textBufferInitial,
+        textBuffer,
+        textStory,
+        writerFocused,
+    } from "./store";
     import { getCompletionStart, getCompletionMore } from "./completion";
     import TextLoaderGroup from "./TextLoaderGroup.svelte";
     import { moveCursorToEnd } from "./writer.helper";
 
     let promise = null;
-    export let focusHandler;
 
     let div;
-
-    export function focus() {
-        console.log("focusing");
-        div.focus();
-    }
 
     export function getDiv() {
         return div;
@@ -62,6 +61,7 @@
 
     const keydownHandler = async (event) => {
         if ($textBuffer.active) {
+            // TODO: Check whether the key is actually a character
             commitBufferToStory();
         }
         if (event.key === "Tab") {
@@ -73,12 +73,15 @@
         }
     };
 
-    const scrollHandler = () => {
-        div.blur();
+    const focusHandler = (event) => {
+        if (event.type === "focus") {
+            console.log("focus");
+            writerFocused.set(true);
+        } else {
+            console.log("blur");
+            writerFocused.set(false);
+        }
     };
-
-    let height = window.visualViewport.height;
-    let viewport = window.visualViewport;
 </script>
 
 <div
@@ -86,9 +89,7 @@
     bind:this={div}
     on:keydown={keydownHandler}
     on:focus={focusHandler}
-    on:focusout={focusHandler}
     on:blur={focusHandler}
-    on:scroll={scrollHandler}
     id="writingWindow"
 >
     {$textStory}{#if $textBuffer.active}<span

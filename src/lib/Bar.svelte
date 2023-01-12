@@ -3,7 +3,7 @@
     import { fade } from "svelte/transition";
     import { create_in_transition } from "svelte/internal";
     import { createEventDispatcher } from "svelte";
-    import { textBuffer } from "./store";
+    import { textBuffer, writerFocused } from "./store";
     import Slider from "@bulatdashiev/svelte-slider";
     import MagicWand from "./MagicWand.svelte";
 
@@ -65,19 +65,21 @@
 </script>
 
 <div bind:this={bar} id="bar">
-    <button on:click={clickHandler}>
-        <MagicWand />
-    </button>
+    {#if $writerFocused}
+        <button on:click={clickHandler}>
+            <MagicWand />
+        </button>
 
-    {#if $textBuffer.active}
-        {sliderValue[0]} / {sliderValue[1]}
-        <div class="sliderContainer">
-            <Slider
-                bind:value={sliderValue}
-                max={sliderValue[1]}
-                on:input={sliderHandler}
-            />
-        </div>
+        {#if $textBuffer.active}
+            {sliderValue[0]} / {sliderValue[1]}
+            <div class="sliderContainer">
+                <Slider
+                    bind:value={sliderValue}
+                    max={sliderValue[1]}
+                    on:input={sliderHandler}
+                />
+            </div>
+        {/if}
     {/if}
 </div>
 
@@ -94,7 +96,6 @@
         align-items: center;
         gap: 1em;
         padding: 0.9em;
-        visibility: visible;
     }
 
     button {
@@ -114,8 +115,8 @@
     @media screen and (max-width: 768px) {
         #bar {
             position: fixed;
-            bottom: 0px;
-            visibility: var(--visibility);
+            bottom: 0px; /* 
+            visibility: var(--visibility); */
         }
     }
 </style>
