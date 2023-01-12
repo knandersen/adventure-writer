@@ -7,6 +7,7 @@ If it's going to be an object, default this to an empty object.
 
 export const textBufferInitial = {
   raw: "",
+  words: [""],
   wordsWanted: 0,
   active: false
 }
