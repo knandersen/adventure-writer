@@ -103,7 +103,6 @@
         overflow-y: scroll;
         text-align: left;
         background-color: rgba(0, 0, 0, 0.1);
-        display: inline-block;
         white-space: pre-wrap;
         border: none;
         outline: none;
@@ -124,9 +123,10 @@
 
     @media screen and (max-width: 768px) {
         #writingWindow {
-            width: 90%;
+            width: 100%;
             padding: 0.7em;
             margin-top: 0.2em;
+            box-sizing: border-box;
         }
     }
 </style>
