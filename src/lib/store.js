@@ -15,7 +15,6 @@ export const textBufferInitial = {
 export const textStory = writable("")
 export const textBuffer = writable(textBufferInitial)
 export const appStatus = writable("disconnected")
-export const caretPosition = writable(0)
 
 /** Data transformation.
 For our use case, we only care about the drink names, not the other information.

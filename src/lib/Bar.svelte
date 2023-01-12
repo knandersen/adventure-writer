@@ -19,10 +19,8 @@
         sliderValue[0] = value.wordsWanted;
         sliderValue[1] = value.words.length;
     });
-    let val;
 
     onMount(() => {
-        val = $textBuffer.words.length;
         bar.style.bottom = `${height - viewport.height}px`;
     });
 
