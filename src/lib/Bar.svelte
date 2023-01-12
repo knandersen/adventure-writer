@@ -4,21 +4,14 @@
     import { create_in_transition } from "svelte/internal";
     import { createEventDispatcher } from "svelte";
     import { textBuffer, writerFocused } from "./store";
-    import Slider from "@bulatdashiev/svelte-slider";
     import MagicWand from "./MagicWand.svelte";
+    import BarSlider from "./BarSlider.svelte";
 
     const dispatch = createEventDispatcher();
 
     let height = window.visualViewport.height;
     let viewport = window.visualViewport;
     let bar, t;
-    let sliderValue = [0, 0];
-
-    textBuffer.subscribe((value) => {
-        sliderValue[0] = value.wordsWanted;
-        sliderValue[1] = value.words.length;
-    });
-
     onMount(() => {
         bar.style.bottom = `${height - viewport.height}px`;
     });
@@ -49,17 +42,6 @@
         bar.style.bottom = `${height - viewport.height}px`;
     };
 
-    /**
-     * Move slider into own component
-     */
-
-    const sliderHandler = () => {
-        textBuffer.update((t) => {
-            t.wordsWanted = sliderValue[0];
-            return t;
-        });
-    };
-
     window.visualViewport.addEventListener("resize", resizeHandler);
 </script>
 
@@ -70,14 +52,7 @@
         </button>
 
         {#if $textBuffer.active}
-            {sliderValue[0]} / {sliderValue[1]}
-            <div class="sliderContainer">
-                <Slider
-                    bind:value={sliderValue}
-                    max={sliderValue[1]}
-                    on:input={sliderHandler}
-                />
-            </div>
+            <BarSlider />
         {/if}
     {/if}
 </div>
@@ -104,11 +79,6 @@
         border: 0;
         padding: 0;
         background-color: transparent;
-    }
-
-    .sliderContainer {
-        display: inline-block;
-        flex: 1;
     }
 
     @media screen and (max-width: 768px) {
