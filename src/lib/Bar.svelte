@@ -11,8 +11,7 @@
 
     let height = window.visualViewport.height;
     let viewport = window.visualViewport;
-    let bar;
-    let t;
+    let bar, t;
     let sliderValue = [0, 0];
 
     textBuffer.subscribe((value) => {
