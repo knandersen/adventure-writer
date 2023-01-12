@@ -40,7 +40,7 @@
     {#if userAgentIsMobile()}
         <ButtonGenerate on:message />
 
-        {#if $textBuffer.active}
+        {#if $writerFocused && $textBuffer.active}
             <BarSlider />
         {/if}
     {:else}
