@@ -20,6 +20,8 @@
     let promise = null;
     let div;
 
+    export const getDiv = () => div;
+
     export const getAdventureMore = async () => {
         if ($bufferActive) {
             await commitBufferToStory();

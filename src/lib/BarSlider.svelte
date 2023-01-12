@@ -1,6 +1,9 @@
 <script>
     import Slider from "@bulatdashiev/svelte-slider";
     import { textBuffer } from "./store";
+    import { createEventDispatcher } from "svelte";
+
+    const dispatch = createEventDispatcher();
 
     let sliderValue = [0, 0];
 
@@ -17,6 +20,9 @@
         textBuffer.update((t) => {
             t.wordsWanted = sliderValue[0];
             return t;
+        });
+        dispatch("message", {
+            type: "moveCursorToEnd",
         });
     };
 </script>

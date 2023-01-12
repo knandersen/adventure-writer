@@ -41,7 +41,7 @@
         <ButtonGenerate on:message />
 
         {#if $writerFocused && $textBuffer.active}
-            <BarSlider />
+            <BarSlider on:message />
         {/if}
     {:else}
         press tab to generate
