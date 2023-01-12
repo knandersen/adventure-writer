@@ -14,14 +14,14 @@
    */
   const onFocusChange = () => {
     // Wait a while to see if focus has actually changed
-    /*  setTimeout(() => {
+    setTimeout(() => {
       if (document.activeElement === writer.getDiv()) {
         barVisibility = "visible";
       } else {
         barVisibility = "hidden";
       }
       bar.transition();
-    }, 200); */
+    }, 200);
   };
 
   const onBarInteraction = (e) => {
