@@ -14,11 +14,10 @@
 
     let div;
 
-    export function getDiv() {
-        return div;
-    }
-
     export const getAdventureMore = async () => {
+        if ($textBuffer.active) {
+            await commitBufferToStory();
+        }
         promise = getCompletionMore($textStory);
         await promise;
         moveCursorToEnd(div);
@@ -62,17 +61,18 @@
     const keydownHandler = async (event) => {
         if ($textBuffer.active) {
             // TODO: Check whether the key is actually a character
-            commitBufferToStory();
+            await commitBufferToStory();
         }
         if (event.key === "Tab") {
             event.preventDefault();
             getAdventureMore();
         } else {
-            // Maybe throttle? Could wait for user to stop typing
+            // TODO: Maybe throttle? Could wait for user to stop typing
             textStory.set(div.textContent);
         }
     };
 
+    // TODO: Should not be needed.
     const focusHandler = (event) => {
         event.type === "focus"
             ? writerFocused.set(true)
