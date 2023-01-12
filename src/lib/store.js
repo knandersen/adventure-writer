@@ -7,7 +7,6 @@ If it's going to be an object, default this to an empty object.
 
 export const textBufferInitial = {
   raw: "",
-  words: [""],
   wordsWanted: 0,
   active: false
 }
@@ -17,20 +16,10 @@ export const textBuffer = writable(textBufferInitial)
 export const appStatus = writable("disconnected")
 export const writerFocused = writable(false)
 
-/** Data transformation.
-For our use case, we only care about the drink names, not the other information.
-Here, we'll create a derived store to hold the drink names.
-**/
-/* export const drinkNames = derived(apiData, ($apiData) => {
-  if ($apiData.drinks){
-    return $apiData.drinks.map(drink => drink.strDrink);
-  }
-  return [];
-}); */
-
 /**
- * TODO: Write these data transformations for textBuffer
+ * Derived functions
  */
+
 
 export const bufferActive = derived(textBuffer, ($textBuffer) => {
   if ($textBuffer.active) {
@@ -50,6 +39,7 @@ export const bufferWordsWanted = derived(textBuffer, ($textBuffer) => {
   }
 })
 
+// TODO: For this to work, should be a writable store too
 export const barSliderValues = derived(textBuffer, ($textBuffer) => {
   if ($textBuffer.words && $textBuffer.wordsWanted) {
     return [$textBuffer.wordsWanted, $textBuffer.words.length]
