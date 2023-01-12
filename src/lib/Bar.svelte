@@ -3,6 +3,7 @@
     import { fade } from "svelte/transition";
     import { create_in_transition } from "svelte/internal";
     import { createEventDispatcher } from "svelte";
+    import { textBuffer } from "./store";
     import Slider from "@bulatdashiev/svelte-slider";
     import MagicWand from "./MagicWand.svelte";
 
@@ -12,9 +13,16 @@
     let viewport = window.visualViewport;
     let bar;
     let t;
-    let sliderValue = [100, 100];
+    let sliderValue = [0, 0];
+
+    textBuffer.subscribe((value) => {
+        sliderValue[0] = value.wordsWanted;
+        sliderValue[1] = value.words.length;
+    });
+    let val;
 
     onMount(() => {
+        val = $textBuffer.words.length;
         bar.style.bottom = `${height - viewport.height}px`;
     });
 
@@ -44,6 +52,17 @@
         bar.style.bottom = `${height - viewport.height}px`;
     };
 
+    /**
+     * Move slider into own component
+     */
+
+    const sliderHandler = () => {
+        textBuffer.update((t) => {
+            t.wordsWanted = sliderValue[0];
+            return t;
+        });
+    };
+
     window.visualViewport.addEventListener("resize", resizeHandler);
 </script>
 
@@ -51,9 +70,17 @@
     <button on:click={clickHandler}>
         <MagicWand />
     </button>
-    <!--<div class="sliderContainer">
-        <Slider bind:value={sliderValue} />
-    </div>-->
+
+    {#if $textBuffer.active}
+        {sliderValue[0]} / {sliderValue[1]}
+        <div class="sliderContainer">
+            <Slider
+                bind:value={sliderValue}
+                max={sliderValue[1]}
+                on:input={sliderHandler}
+            />
+        </div>
+    {/if}
 </div>
 
 <style>
@@ -69,7 +96,7 @@
         align-items: center;
         gap: 1em;
         padding: 0.9em;
-        visibility: hidden;
+        visibility: visible;
     }
 
     button {

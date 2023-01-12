@@ -4,28 +4,31 @@
   import Header from "./lib/Header.svelte";
 
   let barVisibility = "hidden";
-  let writerWindow, writerBlur;
+  let writer;
   let bar;
 
   let w, h, d;
 
+  /**
+   * TODO: Move this logic into a store and do the checking from Bar.svelte
+   */
   const onFocusChange = () => {
     // Wait a while to see if focus has actually changed
-    setTimeout(() => {
-      if (document.activeElement === writerWindow.me()) {
+    /*  setTimeout(() => {
+      if (document.activeElement === writer.getDiv()) {
         barVisibility = "visible";
       } else {
         barVisibility = "hidden";
       }
       bar.transition();
-    }, 200);
+    }, 200); */
   };
 
   const onBarInteraction = (e) => {
     if (e.detail.type === "continueAdventure") {
-      writerWindow.continueAdventure();
+      writer.getAdventureMore();
     }
-    writerWindow.focus();
+    writer.focus();
     bar.focus();
   };
 </script>
@@ -33,11 +36,7 @@
 <svelte:window bind:innerWidth={w} bind:innerHeight={h} />
 <main>
   <Header />
-  <Writer
-    bind:this={writerWindow}
-    on:blur={writerBlur}
-    callback={onFocusChange}
-  />
+  <Writer bind:this={writer} focusHandler={onFocusChange} />
   <Bar
     bind:this={bar}
     on:barInteraction={onBarInteraction}

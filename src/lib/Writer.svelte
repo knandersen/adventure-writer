@@ -1,31 +1,41 @@
 <script>
     import { onMount } from "svelte";
-    import { textBuffer, textStory } from "./store";
-    import { startCompletion, continueCompletion } from "./completion";
+    import { textBufferInitial, textBuffer, textStory } from "./store";
+    import { getCompletionStart, getCompletionMore } from "./completion";
     import TextLoaderGroup from "./TextLoaderGroup.svelte";
-
-    export let callback;
-
-    let input;
-    export function focus() {
-        input.focus();
-    }
-
-    export function me() {
-        return input;
-    }
+    import { moveCursorToEnd } from "./writer.helper";
 
     let promise = null;
+    export let focusHandler;
+
+    let div;
+
+    export function focus() {
+        console.log("focusing");
+        div.focus();
+    }
+
+    export function getDiv() {
+        return div;
+    }
+
+    export const getAdventureMore = async () => {
+        promise = getCompletionMore($textStory);
+        await promise;
+        moveCursorToEnd(div);
+    };
+
+    export const getAdventureStart = async () => {
+        promise = getCompletionStart();
+        await promise;
+        moveCursorToEnd(div);
+    };
 
     onMount(() => {
         textStory.set("");
-        textBuffer.set("");
-        promise = startAdventure();
+        textBuffer.set(textBufferInitial);
+        promise = getAdventureStart();
     });
-
-    const addHighlight = (text) => {
-        return text;
-    };
 
     const formatText = (text) => {
         // Remove line breaks
@@ -33,45 +43,38 @@
         return formattedText;
     };
 
-    const moveCursorToEnd = (el, text) => {
-        // set cursor position to end
-        var range = document.createRange();
-        var sel = window.getSelection();
+    $: if ($textBuffer.wordsWanted) {
+        moveCursorToEnd(div);
+    }
 
-        range.setStart(el.childNodes[0], text.length);
-        range.collapse(true);
-
-        sel.removeAllRanges();
-        sel.addRange(range);
+    const getWords = (n) => {
+        return $textBuffer.words.slice(0, n).join(" ");
     };
 
-    const startAdventure = async () => {
-        promise = startCompletion();
-        await promise;
-        await textStory.set(formatText($textBuffer.raw));
-        /* textStory.set(
-            "Once upon a time there was a beautiful princess who loved to sing. She had the most beautiful voice in all the land and everyone who heard her sing was enchanted."
-        ); */
+    const commitBufferToStory = async () => {
+        // Await since updating the store creates a race condition for moving the cursor
+        await textStory.set(
+            $textStory + formatText(getWords($textBuffer.wordsWanted))
+        );
+        await textBuffer.set(textBufferInitial);
+        moveCursorToEnd(div);
     };
 
-    export const continueAdventure = async (prompt) => {
-        promise = continueCompletion(prompt);
-        await promise;
-        await textStory.set($textStory + " " + formatText($textBuffer));
-
-        moveCursorToEnd(input, $textStory);
-    };
-
-    const onTextareaKeypress = (event) => {
-        let char = typeof event !== "undefined" ? event.keyCode : event.which;
+    const keydownHandler = async (event) => {
+        if ($textBuffer.active) {
+            commitBufferToStory();
+        }
         if (event.key === "Tab") {
             event.preventDefault();
-            continueAdventure();
+            getAdventureMore();
+        } else {
+            // Maybe throttle? Could wait for user to stop typing
+            textStory.set(div.textContent);
         }
     };
 
     const scrollHandler = () => {
-        input.blur();
+        div.blur();
     };
 
     let height = window.visualViewport.height;
@@ -80,16 +83,17 @@
 
 <div
     contenteditable="true"
-    bind:textContent={$textStory}
-    bind:this={input}
-    on:keydown={onTextareaKeypress}
-    on:focus={callback}
-    on:focusout={callback}
-    on:blur={callback}
+    bind:this={div}
+    on:keydown={keydownHandler}
+    on:focus={focusHandler}
+    on:focusout={focusHandler}
+    on:blur={focusHandler}
     on:scroll={scrollHandler}
     id="writingWindow"
 >
-    {#await promise}<TextLoaderGroup />{/await}
+    {$textStory}{#if $textBuffer.active}<span
+            >{formatText(getWords($textBuffer.wordsWanted))}</span
+        >{/if}{#await promise}<TextLoaderGroup />{/await}
 </div>
 
 <style>
@@ -97,7 +101,7 @@
 
     #writingWindow {
         width: 30em;
-        height: 100vh;
+        height: 60vh;
         padding: 1em;
         margin: 1em 0 0 0;
         overflow-y: scroll;
@@ -107,6 +111,19 @@
         white-space: pre-wrap;
         border: none;
         outline: none;
+    }
+
+    @keyframes highlight {
+        from {
+            background-color: rgba(255, 234, 2, 0.1);
+        }
+        to {
+            background-color: rgba(255, 234, 2, 0);
+        }
+    }
+    span {
+        background-color: rgba(255, 234, 2, 0.1);
+        /* animation: highlight 4s ease-in-out 3s 1; */
     }
 
     @media screen and (max-width: 768px) {

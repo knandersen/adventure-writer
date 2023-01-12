@@ -5,9 +5,17 @@ This assumes the data you're pulling back will be an array.
 If it's going to be an object, default this to an empty object.
 **/
 
+export const textBufferInitial = {
+  raw: "",
+  words: [""],
+  wordsWanted: 0,
+  active: false
+}
+
 export const textStory = writable("")
-export const textBuffer = writable("")
+export const textBuffer = writable(textBufferInitial)
 export const appStatus = writable("disconnected")
+export const caretPosition = writable(0)
 
 /** Data transformation.
 For our use case, we only care about the drink names, not the other information.
@@ -19,3 +27,7 @@ Here, we'll create a derived store to hold the drink names.
   }
   return [];
 }); */
+
+/**
+ * TODO: Write these data transformations for textBuffer
+ */

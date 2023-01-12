@@ -7,12 +7,11 @@ const htmlToText = (html) => {
     return tmp.textContent || tmp.innerText || "";
 };
 
-export const startCompletion = async () => {
+export const getCompletionStart = async () => {
     await requestCompletion("Start a fictional fairytale story:");
-    console.log("now")
 };
 
-export const continueCompletion = async (p) => {
+export const getCompletionMore = async (p) => {
     let prompt = htmlToText("continue this story: " + p);
     await requestCompletion(prompt);
 };
