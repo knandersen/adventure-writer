@@ -74,13 +74,9 @@
     };
 
     const focusHandler = (event) => {
-        if (event.type === "focus") {
-            console.log("focus");
-            writerFocused.set(true);
-        } else {
-            console.log("blur");
-            writerFocused.set(false);
-        }
+        event.type === "focus"
+            ? writerFocused.set(true)
+            : writerFocused.set(false);
     };
 </script>
 
