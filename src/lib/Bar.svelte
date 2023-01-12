@@ -54,16 +54,19 @@
     div {
         max-width: 1280px;
         height: 4em;
-        width: 100%;
+        width: 30em;
         box-sizing: border-box;
         text-align: left;
         display: flex;
         align-items: center;
+        margin-left: auto;
+        margin-right: auto;
         gap: 1em;
         padding: 0.9em;
     }
     @media screen and (max-width: 768px) {
         div {
+            width: 100%;
             position: fixed;
             bottom: 0px; /* 
             visibility: var(--visibility); */
